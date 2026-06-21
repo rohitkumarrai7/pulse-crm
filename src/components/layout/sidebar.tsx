@@ -6,9 +6,10 @@ import { UserButton } from "@clerk/nextjs";
 import {
   LayoutDashboard, Building2, Users, Flame, Briefcase,
   ClipboardList, UserCheck, Calendar, Mail, Phone,
-  FileText, Receipt, BarChart3, GitBranch, Settings,
+  FileText, Receipt, BarChart3, GitBranch, Settings, X,
 } from "lucide-react";
 import { PulseLogo } from "@/components/logo";
+import { useSidebar } from "@/lib/sidebar-context";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -31,10 +32,16 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { open, close } = useSidebar();
 
   return (
     <aside
-      className="fixed left-0 top-0 h-screen flex flex-col z-30"
+      className={cn(
+        "fixed left-0 top-0 h-screen flex flex-col z-30",
+        "transition-transform duration-300 ease-in-out",
+        open ? "translate-x-0" : "-translate-x-full",
+        "lg:translate-x-0"
+      )}
       style={{
         width: "var(--sidebar-width, 260px)",
         background: "var(--bg-secondary)",
@@ -42,8 +49,15 @@ export function Sidebar() {
       }}
     >
       {/* Logo */}
-      <div className="h-16 flex items-center px-5 border-b shrink-0" style={{ borderColor: "var(--border)" }}>
+      <div className="h-16 flex items-center justify-between px-5 border-b shrink-0" style={{ borderColor: "var(--border)" }}>
         <PulseLogo size="sm" showText />
+        <button
+          className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-all"
+          onClick={close}
+          aria-label="Close menu"
+        >
+          <X size={18} />
+        </button>
       </div>
 
       {/* Nav */}
@@ -54,6 +68,7 @@ export function Sidebar() {
             <Link
               key={href}
               href={href}
+              onClick={close}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
                 active
@@ -78,7 +93,7 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Footer — Clerk UserButton */}
+      {/* Footer */}
       <div className="p-4 border-t flex items-center gap-3 shrink-0" style={{ borderColor: "var(--border)" }}>
         <UserButton
           appearance={{
@@ -100,3 +115,4 @@ export function Sidebar() {
     </aside>
   );
 }
+

@@ -32,7 +32,7 @@ export default function CalendarPage() {
     <div>
       <Header title="Calendar" subtitle="Today's schedule — June 21, 2026" />
 
-      <div className="p-6">
+      <div className="p-3 sm:p-6">
         <div className="flex items-center justify-end mb-6">
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-white font-medium"
             style={{ background: "linear-gradient(135deg, #0d9488, #3b82f6)" }}>

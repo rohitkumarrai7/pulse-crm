@@ -77,8 +77,8 @@ export default function SettingsPage() {
     <div>
       <Header title="Settings" subtitle="Configure PulseCRM for your organization" />
 
-      <div className="p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="p-3 sm:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {settingSections.map((section) => (
             <div key={section.title} className="pulse-card p-6">
               <div className="flex items-center gap-3 mb-4">

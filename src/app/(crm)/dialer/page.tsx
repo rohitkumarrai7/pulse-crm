@@ -29,8 +29,8 @@ export default function DialerPage() {
     <div>
       <Header title="Dialer" subtitle="Click-to-call with automatic logging" />
 
-      <div className="p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="p-3 sm:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Quick dial pad */}
           <div className="pulse-card p-6">
             <div className="flex items-center gap-2 mb-4">

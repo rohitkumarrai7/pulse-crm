@@ -43,9 +43,9 @@ export default function ReportsPage() {
     <div>
       <Header title="Reports" subtitle="Revenue forecasts, churn analytics & operational intelligence" />
 
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
         {/* KPI row */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: "YTD Revenue",      value: "₹1.76Cr", trend: +22, color: "#22c55e" },
             { label: "Avg Deal Size",     value: "₹19.4L",  trend: +8,  color: "#3b82f6" },
@@ -102,7 +102,7 @@ export default function ReportsPage() {
           </ResponsiveContainer>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Modality breakdown */}
           <div className="pulse-card p-6">
             <div className="flex items-center gap-2 mb-4">

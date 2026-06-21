@@ -1,15 +1,10 @@
-import { Sidebar } from "@/components/layout/sidebar";
+import { SidebarProvider } from "@/lib/sidebar-context";
+import { CrmShell } from "@/components/layout/crm-shell";
 
 export default function CrmLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen" style={{ background: "var(--bg-primary)" }}>
-      <Sidebar />
-      <main
-        className="flex-1 overflow-auto"
-        style={{ marginLeft: "var(--sidebar-width, 260px)" }}
-      >
-        {children}
-      </main>
-    </div>
+    <SidebarProvider>
+      <CrmShell>{children}</CrmShell>
+    </SidebarProvider>
   );
 }

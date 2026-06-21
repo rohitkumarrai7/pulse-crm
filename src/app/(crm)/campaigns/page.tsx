@@ -60,9 +60,9 @@ export default function CampaignsPage() {
     <div>
       <Header title="Campaigns" subtitle="Email sequences and outreach automation" />
 
-      <div className="p-6">
+      <div className="p-3 sm:p-6">
         {/* Summary */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[
             { label: "Emails Sent",    value: 68,    icon: Send,         color: "#3b82f6" },
             { label: "Open Rate",      value: "68%", icon: Eye,          color: "#0d9488" },
@@ -106,7 +106,7 @@ export default function CampaignsPage() {
                   <p className="text-xs text-slate-500">Started {c.startedAt}</p>
                 </div>
 
-                <div className="grid grid-cols-4 gap-4 pt-4 border-t border-slate-700/50">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-700/50">
                   {[
                     { label: "Sent",    value: c.sent,    color: "#94a3b8" },
                     { label: "Opened",  value: `${c.opened} (${openRate}%)`, color: "#0d9488" },

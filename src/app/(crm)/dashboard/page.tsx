@@ -20,7 +20,7 @@ export default async function DashboardPage() {
         subtitle={`Welcome back, ${firstName} — here's your intelligence brief for today`}
       />
 
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
         <StatsWidget />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
