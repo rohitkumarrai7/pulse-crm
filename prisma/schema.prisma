@@ -1,0 +1,343 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── USERS ────────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String?  @unique
+  email     String   @unique
+  name      String?
+  imageUrl  String?
+  role      String   @default("SALES_REP") // ADMIN, SALES_MANAGER, SALES_REP, RADIOLOGIST, OPERATIONS
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  radiologistProfile RadiologistProfile?
+  assignedStudies    Study[]
+  tasks              Task[]
+  leads              Lead[]
+  ownedAccounts      Account[]
+}
+
+// ─── ACCOUNTS (HOSPITALS / DIAGNOSTIC CENTERS) ───────────────────────────────
+
+model Account {
+  id               String    @id @default(uuid())
+  name             String
+  accountNumber    String    @unique @default(cuid())
+  hospitalType     String    @default("MULTISPECIALTY")
+  bedCount         Int?
+  nabhAccredited   Boolean   @default(false)
+  nablAccredited   Boolean   @default(false)
+  specialties      String[]
+  imagingVolume    Int?
+  currentVendor    String?
+  contractExpiry   DateTime?
+  slaTier          String?
+  emergencyContact String?
+  radiologistCount Int?
+  pacsSystem       String?
+  risSystem        String?
+  location         Json?
+
+  phone    String?
+  email    String?
+  website  String?
+  address  String?
+  city     String?
+  state    String?
+  pincode  String?
+
+  status     String  @default("ACTIVE")
+  ownerId    String?
+  owner      User?   @relation(fields: [ownerId], references: [id])
+  churnRisk  Int?
+  annualValue Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contacts      Contact[]
+  leads         Lead[]
+  opportunities Opportunity[]
+  studies       Study[]
+  contracts     Contract[]
+  invoices      Invoice[]
+}
+
+// ─── CONTACTS (REFERRING DOCTORS) ────────────────────────────────────────────
+
+model Contact {
+  id                  String   @id @default(uuid())
+  firstName           String
+  lastName            String
+  email               String?
+  phone               String?
+  title               String?
+  specialty           String?
+  mciNumber           String?
+  hospitalAffiliation String?
+  preferredModality   String[]
+  referralVolume      Int?
+  accountId           String?
+  account             Account? @relation(fields: [accountId], references: [id])
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+// ─── LEADS ────────────────────────────────────────────────────────────────────
+
+model Lead {
+  id              String    @id @default(uuid())
+  leadNumber      String    @unique @default(cuid())
+  firstName       String
+  lastName        String
+  email           String?
+  phone           String?
+  company         String?
+  hospitalType    String?
+  city            String?
+  state           String?
+  source          String    @default("MANUAL")
+  status          String    @default("NEW")
+  intentScore     Int       @default(0)
+  temperature     String    @default("COLD")
+  notes           String?
+  referredBy      String?
+  estimatedVolume Int?
+  currentVendor   String?
+  contractExpiry  DateTime?
+
+  ownerId   String?
+  owner     User?    @relation(fields: [ownerId], references: [id])
+  accountId String?
+  account   Account? @relation(fields: [accountId], references: [id])
+
+  lastActivityAt DateTime?
+  convertedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  activities Activity[]
+}
+
+// ─── OPPORTUNITIES (DEALS) ────────────────────────────────────────────────────
+
+model Opportunity {
+  id                String    @id @default(uuid())
+  title             String
+  dealNumber        String    @unique @default(cuid())
+  accountId         String
+  account           Account   @relation(fields: [accountId], references: [id])
+  stage             String    @default("NEW_LEAD")
+  value             Float     @default(0)
+  currency          String    @default("INR")
+  probability       Int       @default(0)
+  expectedCloseDate DateTime?
+  slaTier           String?
+  modalitiesNeeded  String[]
+  monthlyVolume     Int?
+  notes             String?
+  isWon             Boolean   @default(false)
+  isLost            Boolean   @default(false)
+  lostReason        String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+// ─── STUDIES ──────────────────────────────────────────────────────────────────
+
+model Study {
+  id             String    @id @default(uuid())
+  studyId        String    @unique @default(cuid())
+  patientRef     String
+  hospitalId     String
+  hospital       Account   @relation(fields: [hospitalId], references: [id])
+  modality       String
+  bodyPart       String
+  urgency        String    @default("ROUTINE")
+  status         String    @default("PENDING")
+  assignedTo     String?
+  radiologist    User?     @relation(fields: [assignedTo], references: [id])
+  receivedAt     DateTime  @default(now())
+  assignedAt     DateTime?
+  completedAt    DateTime?
+  turnaroundTime Int?
+  slaBreach      Boolean   @default(false)
+  qualityScore   Int?
+  reportUrl      String?
+  pacsUrl        String?
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// ─── RADIOLOGIST PROFILE ──────────────────────────────────────────────────────
+
+model RadiologistProfile {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  user           User      @relation(fields: [userId], references: [id])
+  specialization String[]
+  qualifications String[]
+  availability   String    @default("AVAILABLE")
+  maxDailyCases  Int       @default(50)
+  currentLoad    Int       @default(0)
+  avgTurnaround  Int?
+  accuracyRate   Float?
+  burnoutRisk    String    @default("LOW")
+  lastActiveAt   DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// ─── SLA POLICIES ────────────────────────────────────────────────────────────
+
+model SlaPolicy {
+  id                 String   @id @default(uuid())
+  name               String
+  description        String?
+  isActive           Boolean  @default(true)
+  isDefault          Boolean  @default(false)
+  tier               String   @default("STANDARD")
+  emergencyResponse  Int      @default(15)
+  urgentResponse     Int      @default(60)
+  routineResponse    Int      @default(240)
+  emergencyReport    Int      @default(30)
+  urgentReport       Int      @default(120)
+  routineReport      Int      @default(480)
+  accuracyThreshold  Float    @default(99.5)
+  peerReviewRequired Boolean  @default(true)
+  penaltyPerBreach   Float    @default(0)
+  maxMonthlyPenalty  Float    @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  contracts Contract[]
+}
+
+// ─── CONTRACTS ────────────────────────────────────────────────────────────────
+
+model Contract {
+  id                  String    @id @default(uuid())
+  title               String
+  contractNumber      String    @unique
+  accountId           String
+  account             Account   @relation(fields: [accountId], references: [id])
+  contractType        String
+  value               Float
+  currency            String    @default("INR")
+  startDate           DateTime
+  endDate             DateTime
+  autoRenew           Boolean   @default(false)
+  renewalTerms        String?
+  monthlyMinGuarantee Int?
+  perStudyRate        Float?
+  modalitiesCovered   String[]
+  slaPolicyId         String?
+  slaPolicy           SlaPolicy? @relation(fields: [slaPolicyId], references: [id])
+  renewalReminderDate DateTime?
+  renewalStatus       String    @default("ACTIVE")
+  contractDocument    String?
+  amendments          Json?
+  status              String    @default("DRAFT")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  invoices Invoice[]
+}
+
+// ─── INVOICES ────────────────────────────────────────────────────────────────
+
+model Invoice {
+  id               String    @id @default(uuid())
+  invoiceNumber    String    @unique
+  contractId       String?
+  contract         Contract?  @relation(fields: [contractId], references: [id])
+  accountId        String
+  account          Account    @relation(fields: [accountId], references: [id])
+  invoiceDate      DateTime
+  dueDate          DateTime
+  status           String     @default("DRAFT")
+  lineItems        Json
+  subtotal         Float
+  gstType          String     @default("CGST_SGST")
+  cgstRate         Float      @default(9)
+  sgstRate         Float      @default(9)
+  igstRate         Float      @default(18)
+  cgstAmount       Float      @default(0)
+  sgstAmount       Float      @default(0)
+  igstAmount       Float      @default(0)
+  gstTotal         Float      @default(0)
+  totalAmount      Float
+  amountPaid       Float      @default(0)
+  amountDue        Float
+  tallySynced      Boolean    @default(false)
+  tallyVoucherId   String?
+  paymentMethod    String?
+  paymentDate      DateTime?
+  paymentReference String?
+  reminderSent     Boolean    @default(false)
+  reminderDate     DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+}
+
+// ─── TASKS ────────────────────────────────────────────────────────────────────
+
+model Task {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  type        String    @default("FOLLOW_UP")
+  priority    String    @default("MEDIUM")
+  status      String    @default("PENDING")
+  dueDate     DateTime?
+  completedAt DateTime?
+  assigneeId  String?
+  assignee    User?     @relation(fields: [assigneeId], references: [id])
+  entityType  String?
+  entityId    String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ─── ACTIVITIES ───────────────────────────────────────────────────────────────
+
+model Activity {
+  id          String   @id @default(uuid())
+  type        String
+  description String
+  metadata    Json?
+  leadId      String?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+// ─── WORKFLOWS ────────────────────────────────────────────────────────────────
+
+model Workflow {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  trigger     String
+  conditions  Json
+  actions     Json
+  isActive    Boolean   @default(true)
+  runCount    Int       @default(0)
+  lastRunAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
