@@ -1,0 +1,132 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── PulseCRM Design Tokens ─────────────────────────────────────────────── */
+:root {
+  /* Healthcare Pro Theme (default) */
+  --bg-primary:    #0f172a;
+  --bg-secondary:  #1e293b;
+  --bg-surface:    #1e293b;
+  --bg-elevated:   #334155;
+
+  --text-primary:  #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted:    #64748b;
+
+  --border:        rgba(148, 163, 184, 0.12);
+  --border-strong: rgba(148, 163, 184, 0.24);
+
+  --accent-teal:   #0d9488;
+  --accent-blue:   #3b82f6;
+  --accent-amber:  #f59e0b;
+  --accent-coral:  #fb7185;
+  --accent-green:  #22c55e;
+
+  --sidebar-width: 260px;
+  --header-height: 64px;
+}
+
+/* Clinical Light Theme */
+[data-theme="clinical-light"] {
+  --bg-primary:    #ffffff;
+  --bg-secondary:  #f8fafc;
+  --bg-surface:    #f1f5f9;
+  --bg-elevated:   #e2e8f0;
+
+  --text-primary:  #0f172a;
+  --text-secondary: #475569;
+  --text-muted:    #94a3b8;
+
+  --border:        rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.16);
+}
+
+/* Focus Dark Theme */
+[data-theme="focus-dark"] {
+  --bg-primary:    #000000;
+  --bg-secondary:  #0a0a0a;
+  --bg-surface:    #111111;
+  --bg-elevated:   #1a1a1a;
+
+  --text-primary:  #ffffff;
+  --text-secondary: #a3a3a3;
+  --text-muted:    #525252;
+
+  --border:        rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+
+  --accent-teal:   #3b82f6;
+  --accent-amber:  #f59e0b;
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────── */
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ─── Utility Classes ─────────────────────────────────────────────────────── */
+.pulse-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.pulse-gradient-text {
+  background: linear-gradient(135deg, #0d9488, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pulse-glow {
+  box-shadow: 0 0 20px rgba(13, 148, 136, 0.15);
+}
+
+.intent-hot    { color: #fb7185; background: rgba(251,113,133,0.1); }
+.intent-warm   { color: #f59e0b; background: rgba(245,158,11,0.1); }
+.intent-cold   { color: #60a5fa; background: rgba(96,165,250,0.1); }
+.intent-dead   { color: #64748b; background: rgba(100,116,139,0.1); }
+
+.sla-ok        { color: #22c55e; }
+.sla-warning   { color: #f59e0b; }
+.sla-breach    { color: #fb7185; }
+
+.availability-available { color: #22c55e; }
+.availability-busy      { color: #f59e0b; }
+.availability-offline   { color: #64748b; }
+.availability-on-leave  { color: #fb7185; }
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14%       { transform: scale(1.08); }
+  28%       { transform: scale(1); }
+  42%       { transform: scale(1.05); }
+  70%       { transform: scale(1); }
+}
+
+.animate-heartbeat { animation: heartbeat 1.5s ease-in-out infinite; }
+
+@keyframes sla-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+.animate-sla-pulse { animation: sla-pulse 1s ease-in-out infinite; }
